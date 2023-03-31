@@ -32,5 +32,6 @@ frontend:
 All set to go😎
 
 ### Key Notes:
-    1. You can see the Swagger docs for the api endpoints at [http:127.0.0.1:8081/docs](http:127.0.0.1:8081/docs)
-    2. To get the frontend run goto the url [http:127.0.0.1:8000](http:127.0.0.1:8000)
+
+    1. You can see the Swagger docs for the api endpoints at [http:127.0.0.1:8081/docs] (http:127.0.0.1:8081/docs)
+    2. To get the frontend run goto the url [http:127.0.0.1:8000] (http:127.0.0.1:8000)
