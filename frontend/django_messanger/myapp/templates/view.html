@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+/* Create two equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+/* Style the buttons */
+.btn {
+  border: none;
+  outline: none;
+  padding: 12px 16px;
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #ddd;
+}
+
+.btn.active {
+  background-color: #666;
+  color: white;
+}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#btndisplay").click(function(){
+
+    $.ajax({
+        url: "getajax", 
+        data:{user_id:"{{userid}}"},
+        success: function(name){
+            console.log(typeof(name))
+        if(name){
+          
+            // for (i=0;i<name.length;i++){
+            // $("#li"+i).html(name[i]);
+            var obj=JSON.parse(name);
+            var gender='';
+            console.log((obj));
+            $("#username").html(obj.username);
+            $("#password").html(obj.password);
+            $("#phone").html(obj.phone);
+            $("#name").html(obj.name);
+            $("#email").html(obj.email);
+            $("#city").html(obj.city);
+            $("#qualification").html(obj.qualification);
+            if(obj.gender=='1'){
+              gender='male';
+            }
+            else if(obj.gender=='2'){
+              gender='female'
+            }
+            $("#gender").html(gender);
+            // document.getElementByClassName("gender").innerHTML =obj.gender;
+            // $("#mylist").append("<li>"+obj.email+"</li>")
+            // $("#mylist").append("<li>"+name.passwod+"</li>")
+        
+            
+            // }
+        }
+        }  
+    });
+    $("#btndisplay").hide();
+    $("#dis").show();
+    });
+});
+</script>
+</head>
+<body>
+  <button id="btndisplay" class="btn btn-primary">click here</button>
+<div id ="dis"class="container" style="display:none;">
+<div id="btnContainer">
+    <button class="btn"><a href="{% url 'user:userhome' %}">go back</a></button>
+  <button class="btn" onclick="listView()"><i class="fa fa-bars"></i> List</button> 
+  <button class="btn active" onclick="gridView()"><i class="fa fa-th-large"></i> Grid</button>
+</div>
+<br>
+<div class="row">
+    <div class="column" style="background-color:rgb(199, 243, 186);">
+      <h2>Username</h2>
+      <p class="abc" id="username">{{obj.username}}</p>
+    </div>
+    <div class="column" style="background-color:rgb(156, 192, 145);">
+      <h2>Password</h2>
+      <p id="password">{{obj.password}}</p>
+    </div>
+</div>
+
+
+<div class="row">
+  <div class="column" style="background-color:#aaa;">
+    <h2>Name:</h2>
+    <p id="name">{{obj.name}}</p>
+  </div>
+  <div class="column" style="background-color:#bbb;">
+    <h2>Email:</h2>
+    <p id="email">{{obj.email}}</p>
+  </div>
+</div>
+
+<div class="row">
+    <div class="column" style="background-color:rgb(241, 204, 204);">
+      <h2>Gender:</h2>
+      <p id="gender"></p>
+    </div>
+    <div class="column" style="background-color:rgb(238, 192, 192);">
+      <h2>City:</h2>
+      <p id="city">{{obj.city}}</p>
+    </div>
+</div>
+
+<div class="row">
+  <div class="column" style="background-color:#ccc;">
+    <h2>Phone Number</h2>
+    <p id="phone">{{obj.phone}}</p>
+  </div>
+  <div class="column" style="background-color:rgb(146, 122, 122)";>
+    <h2>Qualification:</h2>
+    <p id="qualification">{{obj.qualification}}</p>
+  </div>
+</div>
+<script>
+// Get the elements with class="column"
+var elements = document.getElementsByClassName("column");
+
+// Declare a loop variable
+var i;
+
+// List View
+function listView() {
+  for (i = 0; i < elements.length; i++) {
+    elements[i].style.width = "100%";
+  }
+}
+
+// Grid View
+function gridView() {
+  for (i = 0; i < elements.length; i++) {
+    elements[i].style.width = "50%";
+  }
+}
+
+/* Optional: Add active class to the current button (highlight it) */
+var container = document.getElementById("btnContainer");
+var btns = container.getElementsByClassName("btn");
+for (var i = 0; i < btns.length; i++) {
+  btns[i].addEventListener("click", function() {
+    var current = document.getElementsByClassName("active");
+    current[0].className = current[0].className.replace(" active", "");
+    this.className += " active";
+  });
+}
+</script>
+
+</body>
+</html>

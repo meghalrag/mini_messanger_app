@@ -1,0 +1,269 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<!-- Popper JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+            th {
+            background-color: blueviolet;
+            border: 1px solid #6d2f2f;
+            text-align: left;
+            padding: 8px;
+        }
+        td{
+            border: 1px solid #6d2f2f;
+            text-align: left;
+            padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #6ef5d8;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Messanger</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<style>
+  body {
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 0 20px;
+  }
+  
+  .container {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+  }
+  
+  .darker {
+    border-color: #ccc;
+    background-color: #ddd;
+  }
+  
+  .container::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  
+  .container img {
+    float: left;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+  }
+  
+  .container img.right {
+    float: right;
+    margin-left: 20px;
+    margin-right:0;
+  }
+  
+  .time-right {
+    float: right;
+    color: #aaa;
+  }
+  
+  .time-left {
+    float: left;
+    color: #999;
+  }
+  </style>
+<body>
+    
+  <br>
+  {% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+{% endfor %}
+        <i>Hi {{user.email}}</i>
+        <span><a href = {% url 'user:logout' %} class="btn btn-success">logout</a>
+
+        <div class="container">
+          <form action="{% url 'user:addpost' %}" method="POST">
+          {% csrf_token %}
+          <p>Title:</p>
+          <p><input type="text" name="title" id="title"></p>
+          <p>Content</p>
+          <textarea id="content" name="content" rows="4" cols="50"></textarea>
+          <br>
+          <input type="submit" class="btn btn-primary" value="Send Message">
+          </form>
+        </div>
+        <br>
+        <p>messages:</p>
+
+        <div class="posts">
+            {% comment %} {% if post %}
+            {% for each in post %}
+            <div class="container">
+                {% if user.id == each.user_id %}
+                <span class="time-right">
+                <form action="{% url 'user:deletepost' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="post_id" value="{{each.id}}">
+                    <input type="submit" class="btn-danger"value="delete">
+                </form>
+                </span>
+                {% endif %}
+                <p class="font-weight-bold">{{each.title}}</p>
+                <p>{{each.content}}</p>
+                <span class="time-left">{{each.date}}</span>
+                <span class="time-right">{{each.time}}</span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p>no messages found</p>
+            {% endif %} {% endcomment %}
+        </div>
+        
+        {% comment %} <script>
+        try{
+          var ws = new WebSocket(`ws://127.0.0.1:8082/ws`);
+          ws.onopen = function(event) {
+              console.log("Connected to Websocket")
+          };
+          ws.onclose = function(event) {
+              console.log("Disconnected from Websocket")
+          };
+          ws.onmessage = function(event) {
+              current_user_id = "{{user.id}}"
+              postsObj = JSON.parse(event.data)
+              $(".posts").empty();
+              if(postsObj.length == 0){
+                $(".posts").append("<i>No Messages found</i>")
+              }
+              postsObj.forEach(function (each) {
+                id = each.id
+                title = each.title
+                content = each.content
+                user_id = each.user_id
+                email = each.email
+                date = each.date
+                time = each.time
+                
+                deleteStr = ""
+                if(current_user_id.toString() == user_id.toString()){
+                  deleteStr = `
+                    <span class="time-right">
+                      <form action="{% url 'user:deletepost' %}" method="POST">
+                      {% csrf_token %}
+                      <input type="hidden" name="post_id" value="${id}">
+                      <input type="submit" class="btn-danger"value="delete">
+                      </form>
+                    </span>
+                  `
+                }
+
+                htmlStr = `
+                    <div class="container">
+                        ${deleteStr}
+                        <i>${email} added a new post!!!</i>
+                        <br><br>
+                        <p class="font-weight-bold">${title}</p>
+                        <p>${content}</p>
+                        <span class="time-left">${date}</span>
+                        <span class="time-right">${time}</span>
+                    </div>
+                `
+                htmlStr.replace("'[[id]]'", id)
+                $(".posts").append(htmlStr);
+              });
+          };
+          ws.onerror = function (error) {
+              console.log("onerrorrr")
+              console.log("websocket connection failed");
+          };
+        }catch(err){
+            console.log(err)
+        }
+      </script> {% endcomment %}
+      <script>
+        $(document).ready(function(){
+          ajaxCall()
+        });
+        ajaxCall()
+        setInterval(ajaxCall, 2000);
+          function ajaxCall(){
+            $.ajax({
+                url: "/ajax_get_post", 
+                success: function(data){
+                    console.log(typeof(data))
+                if(data){
+                  current_user_id = "{{user.id}}"
+                  postsObj = JSON.parse(data)
+                  $(".posts").empty();
+                  if(postsObj.length == 0){
+                    $(".posts").append("<i>No Messages found</i>")
+                  }
+                  postsObj.forEach(function (each) {
+                    id = each.id
+                    title = each.title
+                    content = each.content
+                    user_id = each.user_id
+                    email = each.email
+                    date = each.date
+                    time = each.time
+                    
+                    deleteStr = ""
+                    if(current_user_id.toString() == user_id.toString()){
+                      deleteStr = `
+                        <span class="time-right">
+                          <form action="{% url 'user:deletepost' %}" method="POST">
+                          {% csrf_token %}
+                          <input type="hidden" name="post_id" value="${id}">
+                          <input type="submit" class="btn-danger"value="delete">
+                          </form>
+                        </span>
+                      `
+                    }
+    
+                    htmlStr = `
+                        <div class="container">
+                            ${deleteStr}
+                            <i>${email} added a new post!!!</i>
+                            <br><br>
+                            <p class="font-weight-bold">${title}</p>
+                            <p>${content}</p>
+                            <span class="time-left">${date}</span>
+                            <span class="time-right">${time}</span>
+                        </div>
+                    `
+                    htmlStr.replace("'[[id]]'", id)
+                    $(".posts").append(htmlStr);
+                  });
+                }
+                }  
+            });
+          }
+      </script>
+</body>
+</html>
